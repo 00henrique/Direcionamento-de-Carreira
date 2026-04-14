@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório de Direcionamento de Carreira</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: #2a2a2a;
+    --accent: #e8ff47;
+    --accent2: #ff6b35;
+    --text: #f0f0f0;
+    --text-muted: #888;
+    --text-dim: #555;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  .report-header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 48px;
+    margin-bottom: 60px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .report-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .report-label::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .report-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 8vw, 88px);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+
+  .report-title span {
+    color: var(--accent);
+    display: block;
+  }
+
+  .report-meta {
+    display: flex;
+    gap: 40px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  .meta-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* SECTIONS */
+  .section {
+    margin-bottom: 64px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.2s; }
+  .section:nth-child(4) { animation-delay: 0.3s; }
+  .section:nth-child(5) { animation-delay: 0.4s; }
+
+  .section-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  .section-title .accent-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+    margin-bottom: 4px;
+  }
+
+  /* EXECUTIVE SUMMARY */
+  .exec-summary {
+    font-size: 17px;
+    line-height: 1.85;
+    color: #ccc;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 32px 36px;
+    border-radius: 0 4px 4px 0;
+    position: relative;
+  }
+
+  .exec-summary strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* SWOT GRID */
+  .swot-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+
+  .swot-cell {
+    background: var(--surface);
+    padding: 28px;
+  }
+
+  .swot-cell-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .swot-cell.strengths .swot-cell-label { color: #4ade80; }
+  .swot-cell.weaknesses .swot-cell-label { color: #f87171; }
+  .swot-cell.opportunities .swot-cell-label { color: #60a5fa; }
+  .swot-cell.threats .swot-cell-label { color: #fb923c; }
+
+  .swot-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #bbb;
+    align-items: flex-start;
+  }
+
+  .swot-item .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+
+  .strengths .dot { background: #4ade80; }
+  .weaknesses .dot { background: #f87171; }
+  .opportunities .dot { background: #60a5fa; }
+  .threats .dot { background: #fb923c; }
+
+  .swot-item strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* PERSONALITY TRAITS */
+  .traits-row {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .trait-bar {
+    display: grid;
+    grid-template-columns: 180px 1fr 36px;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .trait-name {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  .bar-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .bar-fill.low { background: #f87171; }
+  .bar-fill.mid { background: #fbbf24; }
+  .bar-fill.high { background: var(--accent); }
+
+  .trait-score {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+
+  /* CAREER TARGET */
+  .career-target-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 36px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .career-target-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .career-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(232, 255, 71, 0.08);
+    border: 1px solid rgba(232, 255, 71, 0.2);
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    padding: 6px 14px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .career-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1;
+  }
+
+  .career-name span { color: var(--accent); }
+
+  .career-description {
+    font-size: 15px;
+    color: #aaa;
+    line-height: 1.8;
+    max-width: 640px;
+  }
+
+  .career-description strong { color: var(--text); font-weight: 500; }
+
+  .alignment-row {
+    display: flex;
+    gap: 32px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+
+  .alignment-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .alignment-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  .alignment-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .alignment-bar-track {
+    width: 120px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+  }
+
+  .alignment-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .alignment-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+  }
+
+  /* ACTION PLAN */
+  .action-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .action-item {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    border-radius: 2px;
+    transition: border-color 0.2s;
+  }
+
+  .action-item:hover {
+    border-color: var(--accent);
+  }
+
+  .action-num {
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    border-right: 1px solid var(--border);
+    letter-spacing: 0.05em;
+  }
+
+  .action-content {
+    padding: 20px 24px;
+  }
+
+  .action-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .action-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .action-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    padding: 3px 8px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  .tag-tecnico { background: rgba(96, 165, 250, 0.1); color: #60a5fa; border: 1px solid rgba(96,165,250,0.2); }
+  .tag-emocional { background: rgba(251, 146, 60, 0.1); color: #fb923c; border: 1px solid rgba(251,146,60,0.2); }
+  .tag-portfolio { background: rgba(232, 255, 71, 0.1); color: var(--accent); border: 1px solid rgba(232,255,71,0.2); }
+  .tag-social { background: rgba(167, 139, 250, 0.1); color: #a78bfa; border: 1px solid rgba(167,139,250,0.2); }
+  .tag-gestao { background: rgba(74, 222, 128, 0.1); color: #4ade80; border: 1px solid rgba(74,222,128,0.2); }
+
+  /* CLOSING */
+  .closing-banner {
+    background: linear-gradient(135deg, var(--surface2) 0%, #111 100%);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-top: 64px;
+  }
+
+  .closing-banner::before {
+    content: '';
+    position: absolute;
+    bottom: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(232,255,71,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .closing-quote {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(22px, 4vw, 34px);
+    letter-spacing: 0.04em;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  .closing-quote span { color: var(--accent); }
+
+  .closing-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .report-footer {
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+  }
+
+  .footer-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* ANIMATION */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* PRINT */
+  @media print {
+    body { background: white; color: black; }
+    body::before { display: none; }
+    .bar-fill, .alignment-bar-fill { print-color-adjust: exact; }
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 40px 20px 80px; }
+    .swot-grid { grid-template-columns: 1fr; }
+    .trait-bar { grid-template-columns: 140px 1fr 28px; }
+    .report-meta { gap: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="report-header">
+    <div class="report-label">Consultoria de Carreira · Relatório Final</div>
+    <h1 class="report-title">
+      Direcionamento
+      <span>de Carreira</span>
+    </h1>
+    <div class="report-meta">
+      <div class="meta-item">
+        <span class="meta-label">Profissional</span>
+        <span class="meta-value">Estudante de Marketing</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Faixa Etária</span>
+        <span class="meta-value">20 anos</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Carreira Alvo</span>
+        <span class="meta-value">Criador Audiovisual</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Horizonte</span>
+        <span class="meta-value">3–6 Meses</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 1. RESUMO EXECUTIVO -->
+  <section class="section">
+    <div class="section-number">01 —</div>
+    <h2 class="section-title"><span class="accent-dot"></span> Resumo Executivo</h2>
+    <div class="exec-summary">
+      Você é um jovem criativo de 20 anos, cursando Marketing, com uma personalidade marcada por <strong>alta curiosidade, empatia genuína e profunda vivência em cultura urbana</strong> — música, moda, games e rap. Com habilidades iniciais em edição de vídeo e design visual, e um sonho muito claro de dirigir clipes musicais para grandes artistas, o caminho mais estratégico e alinhado com seu perfil é a carreira de <strong>Criador Audiovisual especializado em cultura urbana e música</strong>. As principais frentes de desenvolvimento nos próximos 6 meses são: dominar ferramentas profissionais de edição e captação, construir um portfólio visual concreto e desenvolver disciplina e gestão emocional para sustentar o ritmo da carreira criativa. O potencial está mapeado — o próximo passo é transformar visão em execução.
+    </div>
+  </section>
+
+  <!-- 2. PERFIL E SWOT -->
+  <section class="section">
+    <div class="section-number">02 —</div>
+    <h2 class="section-title"><span class="accent-dot"></span> Análise de Perfil e SWOT</h2>
+
+    <div class="traits-row" style="margin-bottom: 36px;">
+      <div class="trait-bar">
+        <span class="trait-name">Abertura a Experiências</span>
+        <div class="bar-track"><div class="bar-fill high" style="width: 80%"></div></div>
+        <span class="trait-score">4/5</span>
+      </div>
+      <div class="trait-bar">
+        <span class="trait-name">Conscienciosidade</span>
+        <div class="bar-track"><div class="bar-fill mid" style="width: 60%"></div></div>
+        <span class="trait-score">3/5</span>
+      </div>
+      <div class="trait-bar">
+        <span class="trait-name">Extroversão</span>
+        <div class="bar-track"><div class="bar-fill mid" style="width: 60%"></div></div>
+        <span class="trait-score">3/5</span>
+      </div>
+      <div class="trait-bar">
+        <span class="trait-name">Amabilidade</span>
+        <div class="bar-track"><div class="bar-fill high" style="width: 80%"></div></div>
+        <span class="trait-score">4/5</span>
+      </div>
+      <div class="trait-bar">
+        <span class="trait-name">Estabilidade Emocional</span>
+        <div class="bar-track"><div class="bar-fill low" style="width: 40%"></div></div>
+        <span class="trait-score">2/5</span>
+      </div>
+    </div>
+
+    <div class="swot-grid">
+      <div class="swot-cell strengths">
+        <div class="swot-cell-label">▲ Forças</div>
+        <div class="swot-item"><span class="dot"></span><div><strong>Criatividade com entrega real</strong> — já produziu conteúdo para audiência real (highlights de Fortnite)</div></div>
+        <div class="swot-item"><span class="dot"></span><div><strong>Vivência em cultura urbana</strong> — fala a língua do rap, moda e games de dentro</div></div>
+        <div class="swot-item"><span class="dot"></span><div><strong>Alta empatia e escuta ativa</strong> — essencial para entender artistas e clientes</div></div>
+      </div>
+      <div class="swot-cell weaknesses">
+        <div class="swot-cell-label">▼ Fraquezas</div>
+        <div class="swot-item"><span class="dot"></span><div><strong>Portfólio técnico limitado</strong> — ausência de ferramentas profissionais (Premiere, After Effects)</div></div>
+        <div class="swot-item"><span class="dot"></span><div><strong>Gestão de tempo e pontualidade</strong> — hábito crítico a desenvolver para o mercado audiovisual</div></div>
+        <div class="swot-item"><span class="dot"></span><div><strong>Ansiedade sob pressão</strong> — desafio direto num ambiente de sets e prazos curtos</div></div>
+      </div>
+      <div class="swot-cell opportunities">
+        <div class="swot-cell-label">◆ Oportunidades</div>
+        <div class="swot-item"><span class="dot"></span><div><strong>Explosão do rap independente brasileiro</strong> — mercado carente de diretores criativos com repertório cultural autêntico</div></div>
+        <div class="swot-item"><span class="dot"></span><div><strong>IA como acelerador criativo</strong> — ferramentas como Runway ML e Sora permitem produzir mais com menos, para quem aprender agora</div></div>
+      </div>
+      <div class="swot-cell threats">
+        <div class="swot-cell-label">● Ameaças</div>
+        <div class="swot-item"><span class="dot"></span><div><strong>Alta competitividade</strong> — mercado criativo exige portfólio e rede de contatos desde cedo</div></div>
+        <div class="swot-item"><span class="dot"></span><div><strong>Falta de diferenciação</strong> — permanecer generalista é o maior risco para quem entra no mercado audiovisual</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. DIRECIONAMENTO DE CARREIRA -->
+  <section class="section">
+    <div class="section-number">03 —</div>
+    <h2 class="section-title"><span class="accent-dot"></span> Direcionamento de Carreira Sugerido</h2>
+
+    <div class="career-target-box">
+      <div class="career-badge">✦ Carreira Alvo</div>
+      <div class="career-name">Criador <span>Audiovisual</span></div>
+      <p class="career-description">
+        Esta carreira representa a convergência mais natural entre quem você é e para onde você quer ir. Sua vivência genuína em cultura urbana — rap, moda, games — é o tipo de <strong>repertório autêntico</strong> que nenhum curso ensina e que o mercado de conteúdo audiovisual valoriza imensamente. Combinado com sua <strong>sensibilidade criativa, empatia elevada e domínio crescente de ferramentas visuais</strong>, você tem a matéria-prima para construir uma identidade profissional única como criador especializado em conteúdo cultural. A trajetória mais estratégica é começar produzindo conteúdo próprio e para artistas independentes, <strong>construindo portfólio e reputação</strong> até alcançar o sonho de dirigir clipes para grandes nomes do rap brasileiro.
+      </p>
+      <div class="alignment-row">
+        <div class="alignment-item">
+          <span class="alignment-label">Alinhamento Geral</span>
+          <div class="alignment-bar-wrap">
+            <div class="alignment-bar-track"><div class="alignment-bar-fill" style="width: 79%"></div></div>
+            <span class="alignment-pct">79%</span>
+          </div>
+        </div>
+        <div class="alignment-item">
+          <span class="alignment-label">Valores</span>
+          <div class="alignment-bar-wrap">
+            <div class="alignment-bar-track"><div class="alignment-bar-fill" style="width: 95%"></div></div>
+            <span class="alignment-pct">95%</span>
+          </div>
+        </div>
+        <div class="alignment-item">
+          <span class="alignment-label">Personalidade</span>
+          <div class="alignment-bar-wrap">
+            <div class="alignment-bar-track"><div class="alignment-bar-fill" style="width: 80%"></div></div>
+            <span class="alignment-pct">80%</span>
+          </div>
+        </div>
+        <div class="alignment-item">
+          <span class="alignment-label">Crescimento</span>
+          <div class="alignment-bar-wrap">
+            <div class="alignment-bar-track"><div class="alignment-bar-fill" style="width: 85%"></div></div>
+            <span class="alignment-pct">85%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. PLANO DE AÇÃO -->
+  <section class="section">
+    <div class="section-number">04 —</div>
+    <h2 class="section-title"><span class="accent-dot"></span> Plano de Ação — Próximos 3–6 Meses</h2>
+
+    <div class="action-list">
+
+      <div class="action-item">
+        <div class="action-num">01</div>
+        <div class="action-content">
+          <div class="action-title">Dominar o DaVinci Resolve do zero ao intermediário</div>
+          <div class="action-desc">Baixar gratuitamente, concluir o curso completo na Udemy (Matheus Mello ou similar) e reeditar os melhores highlights de Fortnite como projeto prático de fixação. Meta: primeiro vídeo profissional entregue em até 60 dias.</div>
+          <span class="action-tag tag-tecnico">✦ Técnico</span>
+        </div>
+      </div>
+
+      <div class="action-item">
+        <div class="action-num">02</div>
+        <div class="action-content">
+          <div class="action-title">Produzir 3 peças audiovisuais para o portfólio até o mês 6</div>
+          <div class="action-desc">Criar um vídeo de 60s com os 5 planos cinematográficos, um storyboard ilustrado de um clipe imaginário para uma música de rap e uma peça com color grading aplicado. Publicar no Instagram e Behance com processo criativo documentado.</div>
+          <span class="action-tag tag-portfolio">✦ Portfólio</span>
+        </div>
+      </div>
+
+      <div class="action-item">
+        <div class="action-num">03</div>
+        <div class="action-content">
+          <div class="action-title">Conectar-se com 10 profissionais do audiovisual no LinkedIn e Instagram</div>
+          <div class="action-desc">Buscar editores, diretores criativos e coloristas brasileiros com 2 a 5 anos de carreira. Enviar mensagens genuínas pedindo 30 minutos de conversa sobre trajetória. Entrar em ao menos 2 comunidades ativas (Discord de DaVinci, grupos de produção audiovisual no Telegram).</div>
+          <span class="action-tag tag-social">✦ Networking</span>
+        </div>
+      </div>
+
+      <div class="action-item">
+        <div class="action-num">04</div>
+        <div class="action-content">
+          <div class="action-title">Implementar sistema de gestão de projetos pessoal com Notion ou Trello</div>
+          <div class="action-desc">Criar um quadro de projetos com etapas, prazos e checklists para cada entrega audiovisual. Compromisso de 1 projeto completo por mês, com data de publicação definida. Ler Atomic Habits (James Clear) como base para construir os hábitos de disciplina e pontualidade necessários.</div>
+          <span class="action-tag tag-gestao">✦ Gestão</span>
+        </div>
+      </div>
+
+      <div class="action-item">
+        <div class="action-num">05</div>
+        <div class="action-content">
+          <div class="action-title">Iniciar prática diária de gestão emocional e inteligência sob pressão</div>
+          <div class="action-desc">Instalar Headspace e completar 21 dias consecutivos de meditação guiada de 5 a 10 minutos. Fazer o curso gratuito "The Science of Well-Being" (Yale, Coursera). Criar desafios semanais de pressão controlada: editar um vídeo em 2 horas, gravar em locais públicos, apresentar conceitos para amigos como treino de pitch.</div>
+          <span class="action-tag tag-emocional">✦ Emocional</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CLOSING BANNER -->
+  <div class="closing-banner">
+    <div class="closing-quote">
+      Seu talento já existe.<br>
+      <span>Agora ele precisa de ferramentas.</span>
+    </div>
+    <p class="closing-sub">
+      A distância entre onde você está e onde quer chegar não é de anos — é de projetos. Um vídeo por mês, por seis meses, muda tudo.
+    </p>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="report-footer">
+    <span class="footer-text">Relatório de Direcionamento de Carreira · 2025</span>
+    <span class="footer-text">Criador Audiovisual · Cultura Urbana · Música</span>
+  </footer>
+
+</div>
+</body>
+</html>
